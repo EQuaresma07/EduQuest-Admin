@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EduQuest — Painel do Professor 🎓</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"/>
+</head>
+<body class="admin-page">
+  <div class="stars"></div>
+
+  <div class="container admin-container">
+
+    <!-- HEADER -->
+    <div class="admin-header">
+      <div class="admin-title">
+        <span>🎓</span>
+        <div>
+          <h1>Painel do Professor</h1>
+          <p>Gerencie as questões do EduQuest</p>
+        </div>
+      </div>
+      <a class="btn-home" href="https://equaresma07.github.io/EduQuest" target="_blank">
+        🎮 Ir para o Jogo
+      </a>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="card" id="loginCard">
+      <div class="card-inner">
+        <h2 class="section-title">🔒 Acesso Restrito</h2>
+        <p style="color:var(--text2);margin-bottom:1rem;">Digite a senha para acessar o painel</p>
+        <div class="form-group">
+          <input type="password" id="senhaInput" placeholder="Digite a senha do professor" />
+        </div>
+        <button class="btn-play" onclick="verificarSenha()">
+          <span>🔓 Entrar</span>
+          <div class="btn-glow"></div>
+        </button>
+        <p class="senha-hint">Senha padrão: <strong>professor123</strong></p>
+      </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL -->
+    <div id="painelPrincipal" class="hidden-section">
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotal">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statInfo">0</div>
+          <div class="stat-label">💻 Informática</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statMat">0</div>
+          <div class="stat-label">📐 Matemática</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statPort">0</div>
+          <div class="stat-label">📖 Português</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statCien">0</div>
+          <div class="stat-label">🔬 Ciências</div>
+        </div>
+      </div>
+
+      <!-- ADICIONAR -->
+      <div class="card">
+        <div class="card-inner">
+          <h2 class="section-title">➕ Adicionar Nova Questão</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>📚 Disciplina</label>
+              <select id="addDisciplina">
+                <option value="informatica">💻 Informática</option>
+                <option value="matematica">📐 Matemática</option>
+                <option value="portugues">📖 Português</option>
+                <option value="ciencias">🔬 Ciências</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>⚡ Dificuldade</label>
+              <select id="addDificuldade">
+                <option value="facil">🟢 Fácil</option>
+                <option value="medio">🟡 Médio</option>
+                <option value="dificil">🔴 Difícil</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>❓ Pergunta</label>
+            <textarea id="addPergunta" placeholder="Digite a pergunta aqui..." rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>✅ Alternativas — clique na letra para marcar a correta</label>
+            <div class="alternativas-grid">
+              <div class="alt-item">
+                <input type="radio" name="correta" value="0" id="r0" checked/>
+                <label for="r0" class="alt-label">A</label>
+                <input type="text" id="alt0" placeholder="Alternativa A" class="alt-input"/>
+              </div>
+              <div class="alt-item">
+                <input type="radio" name="correta" value="1" id="r1"/>
+                <label for="r1" class="alt-label">B</label>
+                <input type="text" id="alt1" placeholder="Alternativa B" class="alt-input"/>
+              </div>
+              <div class="alt-item">
+                <input type="radio" name="correta" value="2" id="r2"/>
+                <label for="r2" class="alt-label">C</label>
+                <input type="text" id="alt2" placeholder="Alternativa C" class="alt-input"/>
+              </div>
+              <div class="alt-item">
+                <input type="radio" name="correta" value="3" id="r3"/>
+                <label for="r3" class="alt-label">D</label>
+                <input type="text" id="alt3" placeholder="Alternativa D" class="alt-input"/>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-play" onclick="adicionarQuestao()">
+            <span>💾 Salvar Questão no Firebase</span>
+            <div class="btn-glow"></div>
+          </button>
+
+          <div id="msgAdd" class="msg hidden"></div>
+        </div>
+      </div>
+
+      <!-- LISTA -->
+      <div class="card">
+        <div class="card-inner">
+          <h2 class="section-title">📋 Questões Cadastradas</h2>
+
+          <div class="filter-row">
+            <select id="filtDisciplina" onchange="carregarQuestoes()">
+              <option value="">Todas as disciplinas</option>
+              <option value="informatica">💻 Informática</option>
+              <option value="matematica">📐 Matemática</option>
+              <option value="portugues">📖 Português</option>
+              <option value="ciencias">🔬 Ciências</option>
+            </select>
+            <select id="filtDificuldade" onchange="carregarQuestoes()">
+              <option value="">Todos os níveis</option>
+              <option value="facil">🟢 Fácil</option>
+              <option value="medio">🟡 Médio</option>
+              <option value="dificil">🔴 Difícil</option>
+            </select>
+          </div>
+
+          <div id="loadingMsg" class="loading-msg">🔄 Carregando questões...</div>
+          <div id="listaQuestoes"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { db, collection, addDoc, getDocs, deleteDoc, doc } from './js/firebase.js';
+
+    const SENHA = 'professor123';
+
+    window.verificarSenha = function() {
+      const s = document.getElementById('senhaInput').value;
+      if (s === SENHA) {
+        document.getElementById('loginCard').style.display = 'none';
+        document.getElementById('painelPrincipal').classList.remove('hidden-section');
+        document.getElementById('painelPrincipal').style.display = 'contents';
+        carregarQuestoes();
+        carregarStats();
+      } else {
+        document.getElementById('senhaInput').classList.add('shake');
+        document.getElementById('senhaInput').value = '';
+        document.getElementById('senhaInput').placeholder = '⚠️ Senha incorreta!';
+        setTimeout(() => {
+          document.getElementById('senhaInput').classList.remove('shake');
+          document.getElementById('senhaInput').placeholder = 'Digite a senha do professor';
+        }, 1500);
+      }
+    };
+
+    document.getElementById('senhaInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') window.verificarSenha();
+    });
+
+    window.adicionarQuestao = async function() {
+      const pergunta    = document.getElementById('addPergunta').value.trim();
+      const disciplina  = document.getElementById('addDisciplina').value;
+      const dificuldade = document.getElementById('addDificuldade').value;
+      const ops = [0,1,2,3].map(i => document.getElementById('alt'+i).value.trim());
+      const correta = parseInt(document.querySelector('input[name="correta"]:checked').value);
+      const msg = document.getElementById('msgAdd');
+
+      if (!pergunta || ops.some(o => !o)) {
+        mostrarMsg(msg, '⚠️ Preencha a pergunta e todas as alternativas!', 'erro');
+        return;
+      }
+      try {
+        mostrarMsg(msg, '🔄 Salvando no Firebase...', 'info');
+        await addDoc(collection(db, 'questoes'), {
+          p: pergunta, ops, c: correta,
+          disciplina, dificuldade,
+          criadoEm: new Date()
+        });
+        mostrarMsg(msg, '✅ Questão salva com sucesso!', 'sucesso');
+        document.getElementById('addPergunta').value = '';
+        [0,1,2,3].forEach(i => document.getElementById('alt'+i).value = '');
+        document.getElementById('r0').checked = true;
+        carregarQuestoes();
+        carregarStats();
+      } catch(e) {
+        mostrarMsg(msg, '❌ Erro: ' + e.message, 'erro');
+      }
+    };
+
+    window.carregarQuestoes = async function() {
+      const filtDisc = document.getElementById('filtDisciplina').value;
+      const filtDiff = document.getElementById('filtDificuldade').value;
+      const lista    = document.getElementById('listaQuestoes');
+      const loading  = document.getElementById('loadingMsg');
+      loading.style.display = 'block';
+      lista.innerHTML = '';
+      try {
+        const snap = await getDocs(collection(db, 'questoes'));
+        let qs = [];
+        snap.forEach(d => qs.push({ id: d.id, ...d.data() }));
+        if (filtDisc) qs = qs.filter(q => q.disciplina === filtDisc);
+        if (filtDiff) qs = qs.filter(q => q.dificuldade === filtDiff);
+        loading.style.display = 'none';
+        if (!qs.length) {
+          lista.innerHTML = '<div class="no-questions">Nenhuma questão encontrada.<br>Adicione usando o formulário acima! 📝</div>';
+          return;
+        }
+        const dN = { informatica:'💻 Informática', matematica:'📐 Matemática', portugues:'📖 Português', ciencias:'🔬 Ciências' };
+        const dfN = { facil:'🟢 Fácil', medio:'🟡 Médio', dificil:'🔴 Difícil' };
+        qs.forEach((q, i) => {
+          const div = document.createElement('div');
+          div.className = 'questao-item';
+          div.innerHTML = `
+            <div class="questao-header">
+              <div class="questao-badges">
+                <span class="badge-disc">${dN[q.disciplina]||q.disciplina}</span>
+                <span class="badge-diff">${dfN[q.dificuldade]||q.dificuldade}</span>
+              </div>
+              <button class="btn-delete" onclick="excluirQuestao('${q.id}',this)">🗑️ Excluir</button>
+            </div>
+            <p class="questao-texto"><strong>${i+1}.</strong> ${q.p}</p>
+            <div class="questao-ops">
+              ${q.ops.map((op,idx)=>`
+                <div class="op-item ${idx===q.c?'op-correta':''}">
+                  <span class="op-label">${['A','B','C','D'][idx]}</span>
+                  <span>${op}</span>
+                  ${idx===q.c?'<span class="op-check">✅</span>':''}
+                </div>`).join('')}
+            </div>`;
+          lista.appendChild(div);
+        });
+      } catch(e) {
+        loading.style.display = 'none';
+        lista.innerHTML = '<div class="no-questions">❌ Erro: ' + e.message + '</div>';
+      }
+    };
+
+    window.excluirQuestao = async function(id, btn) {
+      if (!confirm('Excluir esta questão?')) return;
+      try {
+        btn.textContent = '🔄';
+        await deleteDoc(doc(db, 'questoes', id));
+        btn.closest('.questao-item').remove();
+        carregarStats();
+      } catch(e) { alert('Erro: ' + e.message); }
+    };
+
+    window.carregarStats = async function() {
+      try {
+        const snap = await getDocs(collection(db, 'questoes'));
+        let total=0,info=0,mat=0,port=0,cien=0;
+        snap.forEach(d => {
+          total++;
+          const disc = d.data().disciplina;
+          if(disc==='informatica') info++;
+          else if(disc==='matematica') mat++;
+          else if(disc==='portugues') port++;
+          else if(disc==='ciencias') cien++;
+        });
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statInfo').textContent  = info;
+        document.getElementById('statMat').textContent   = mat;
+        document.getElementById('statPort').textContent  = port;
+        document.getElementById('statCien').textContent  = cien;
+      } catch(e) {}
+    };
+
+    function mostrarMsg(el, texto, tipo) {
+      el.textContent = texto;
+      el.className = 'msg msg-' + tipo;
+    }
+  </script>
+</body>
+</html>
